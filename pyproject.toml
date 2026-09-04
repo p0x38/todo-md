@@ -1,0 +1,13 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "todo-md"
+version = "0.1.0"
+description = "A TODO.md parser and management CLI"
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+todo = "todo_md.cli:main"
