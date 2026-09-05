@@ -1,34 +1,42 @@
+# TODO.md
+
 ## Completed
 
-- [x] Initialize Rust project
-- [x] Add `clap`
-- [x] Add `thiserror`
-- [x] Add `owo-colors`
+* [x] Initialize Rust project
+* [x] Add `clap`
+* [x] Add `thiserror`
+* [x] Add `owo-colors`
+* [x] Define TODO.md data model
+* [x] Implement TODO.md parser
+* [x] Preserve unknown Markdown
+* [x] Implement task operations
+* [x] Implement Markdown renderer
+* [x] Implement `add` command
+* [x] Implement `complete` command
+* [x] Implement `uncomplete` command
+* [x] Implement `remove` command
+* [x] Add CLI tests
+* [x] Add parser tests
+* [x] Add operation tests
+* [x] Add renderer tests
+* [x] Add CI checks
 
 ## Work in progress
 
-- [ ] Define TODO.md data model
-- [ ] Implement TODO.md parser
-- [ ] Preserve unknown Markdown
-- [ ] Implement task operations
-- [ ] Implement Markdown renderer
-- [ ] Implement `list` command
-- [ ] Implement `add` command
-- [ ] Implement `check` command
-- [ ] Implement `uncheck` command
-- [ ] Implement `remove` command
-- [ ] Implement `validate` command
-- [ ] Add CLI tests
-- [ ] Add parser tests
-- [ ] Add operation tests
+* [ ] Implement `list` command
+* [ ] Implement `validate` command
+* [ ] Improve Markdown preservation edge cases
+* [ ] Add comprehensive CLI error tests
+* [ ] Add comprehensive parser edge-case tests
+* [ ] Add comprehensive operation edge-case tests
 
 ## Planned
 
-- [ ] Stable task identifiers
-- [ ] Section filtering
-- [ ] Rich terminal output
-- [ ] Progress indicators where useful
-- [ ] JSON output
-- [ ] Configuration support
-- [ ] Cross-platform release builds
-- [ ] Documentation
+* [ ] Stable task identifiers
+* [ ] Section filtering
+* [ ] Rich terminal output
+* [ ] Progress indicators where useful
+* [ ] JSON output
+* [ ] Configuration support
+* [ ] Cross-platform release builds
+* [ ] Documentation

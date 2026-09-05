@@ -53,16 +53,94 @@ fn removes_task() {
 }
 
 #[test]
-fn preserves_unrelated_markdown_when_completing_task() {
-    let input = r#"# TODO.md
+fn preserves_unknown_markdown_when_completing_task() {
+    let mut document = parse(
+        r#"# TODO.md
 
-Some important documentation.
+Description of the project.
 
 ## Planned
 
-- [ ] Write some Rust
+- [ ] A
 
-> This should survive.
+> Important note
 
-```text
-arbitrary content
+Some extra Markdown.
+
+## Other
+
+- [ ] B
+"#,
+    );
+
+    complete_task(&mut document, "Planned", 0).unwrap();
+
+    let output = todo_md::renderer::render(&document);
+
+    assert_eq!(
+        output,
+        r#"# TODO.md
+
+Description of the project.
+
+## Planned
+
+- [x] A
+
+> Important note
+
+Some extra Markdown.
+
+## Other
+
+- [ ] B
+"#
+        .to_string()
+            + "\n"
+    );
+}
+
+#[test]
+fn preserves_unknown_markdown_when_removing_task() {
+    let mut document = parse(
+        r#"# TODO.md
+
+Description.
+
+## Planned
+
+- [ ] A
+- [ ] B
+
+> Keep this.
+
+## Other
+
+Random content.
+"#,
+    );
+
+    remove_task(&mut document, "Planned", 0).unwrap();
+
+    let output = todo_md::renderer::render(&document);
+
+    assert_eq!(
+        output,
+        r#"# TODO.md
+
+Description.
+
+## Planned
+
+- [ ] B
+
+> Keep this.
+
+## Other
+
+Random content.
+"#
+        .to_string()
+            + "\n"
+    );
+}

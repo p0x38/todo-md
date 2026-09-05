@@ -36,3 +36,39 @@ fn parses_sections_and_tasks() {
     assert_eq!(document.sections[2].title, "Planned");
     assert_eq!(document.sections[2].tasks[0].text, "E");
 }
+
+#[test]
+fn ignores_tasks_outside_sections() {
+    let document = parse(
+        r#"# TODO.md
+
+- [ ] Not in a section
+
+## Planned
+
+- [ ] Valid task
+"#,
+    );
+
+    assert_eq!(document.sections.len(), 1);
+    assert_eq!(document.sections[0].tasks.len(), 1);
+    assert_eq!(document.sections[0].tasks[0].text, "Valid task");
+}
+
+#[test]
+fn ignores_invalid_task_syntax() {
+    let document = parse(
+        r#"# TODO.md
+
+## Planned
+
+* [ ] Wrong bullet
+- [] Missing space
+- [?] Invalid status
+- [ ] Valid
+"#,
+    );
+
+    assert_eq!(document.sections[0].tasks.len(), 1);
+    assert_eq!(document.sections[0].tasks[0].text, "Valid");
+}
