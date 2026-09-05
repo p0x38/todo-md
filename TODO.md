@@ -1,7 +1,3 @@
-# TODO.md
-
-Development tasks for the `todo-md` CLI.
-
 ## Completed
 
 - [x] Initialize Rust project
