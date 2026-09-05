@@ -221,3 +221,8 @@ __marimo__/
 
 # Local history (Extension)
 .history/
+
+
+# Added by cargo
+
+/target
