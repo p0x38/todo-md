@@ -95,8 +95,6 @@ Some extra Markdown.
 
 - [ ] B
 "#
-        .to_string()
-            + "\n"
     );
 }
 
@@ -140,7 +138,115 @@ Description.
 
 Random content.
 "#
-        .to_string()
-            + "\n"
     );
+}
+
+#[test]
+fn adding_to_empty_section_preserves_markdown() {
+    let mut document = parse(
+        r#"# TODO.md
+
+## Planned
+
+Some description.
+
+## Completed
+
+- [x] Done
+"#,
+    );
+
+    add_task(&mut document, "Planned", "New task".to_string()).unwrap();
+
+    let output = todo_md::renderer::render(&document);
+
+    assert_eq!(
+        output,
+        r#"# TODO.md
+
+## Planned
+
+Some description.
+- [ ] New task
+
+## Completed
+
+- [x] Done
+"#
+    );
+}
+
+#[test]
+fn completing_task_preserves_other_markdown() {
+    let mut document = parse(
+        r#"# TODO.md
+
+Intro text.
+
+## Planned
+
+- [ ] Task
+
+> Important note
+
+More Markdown.
+
+## Completed
+
+- [x] Done
+"#,
+    );
+
+    complete_task(&mut document, "Planned", 0).unwrap();
+
+    let output = todo_md::renderer::render(&document);
+
+    assert_eq!(
+        output,
+        r#"# TODO.md
+
+Intro text.
+
+## Planned
+
+- [x] Task
+
+> Important note
+
+More Markdown.
+
+## Completed
+
+- [x] Done
+"#
+    );
+}
+
+#[test]
+fn removing_task_preserves_other_markdown() {
+    let mut document = parse(
+        r#"# TODO.md
+
+## Planned
+
+- [ ] Remove me
+- [ ] Keep me
+
+> Keep this note.
+
+## Other
+
+Some content.
+"#,
+    );
+
+    remove_task(&mut document, "Planned", 0).unwrap();
+
+    assert_eq!(document.sections[0].tasks.len(), 1);
+    assert_eq!(document.sections[0].tasks[0].text, "Keep me");
+
+    let output = todo_md::renderer::render(&document);
+
+    assert!(output.contains("> Keep this note."));
+    assert!(output.contains("Some content."));
 }

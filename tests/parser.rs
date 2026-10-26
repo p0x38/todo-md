@@ -42,17 +42,17 @@ fn ignores_tasks_outside_sections() {
     let document = parse(
         r#"# TODO.md
 
-- [ ] Not in a section
+- [ ] Outside
 
 ## Planned
 
-- [ ] Valid task
+- [ ] Inside
 "#,
     );
 
     assert_eq!(document.sections.len(), 1);
     assert_eq!(document.sections[0].tasks.len(), 1);
-    assert_eq!(document.sections[0].tasks[0].text, "Valid task");
+    assert_eq!(document.sections[0].tasks[0].text, "Inside");
 }
 
 #[test]
@@ -71,4 +71,22 @@ fn ignores_invalid_task_syntax() {
 
     assert_eq!(document.sections[0].tasks.len(), 1);
     assert_eq!(document.sections[0].tasks[0].text, "Valid");
+}
+
+#[test]
+fn parses_empty_section() {
+    let document = parse(
+        r#"# TODO.md
+
+## Planned
+
+## Completed
+
+- [x] Done
+"#,
+    );
+
+    assert_eq!(document.sections.len(), 2);
+    assert!(document.sections[0].tasks.is_empty());
+    assert_eq!(document.sections[1].tasks.len(), 1);
 }

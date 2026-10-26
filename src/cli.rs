@@ -64,6 +64,15 @@ pub enum Command {
         /// Zero-based task index.
         index: usize,
     },
+
+    /// List tasks.
+    List {
+        /// Filter by section name.
+        #[arg(short, long)]
+        section: Option<String>,
+    },
+
+    Validate,
 }
 
 /// Runs the command-line interface.
@@ -87,7 +96,7 @@ fn run_inner() -> Result<(), TodoError> {
 
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => match &command {
             Command::Add { .. } => TodoDocument {
-                lines: Vec::new(),
+                lines: vec!["# TODO.md".to_string(), String::new()],
                 sections: Vec::new(),
             },
 
@@ -130,9 +139,39 @@ fn run_inner() -> Result<(), TodoError> {
         Command::Remove { section, index } => {
             remove_task(&mut document, &section, index)?;
         }
+
+        Command::List { section } => {
+            list_tasks(&document, section.as_deref())?;
+        }
+
+        Command::Validate => {
+            crate::validator::validate(&document)?;
+            println!("TODO.md is valid.");
+        }
     }
 
     fs::write(&cli.file, render(&document))?;
+
+    Ok(())
+}
+
+fn list_tasks(document: &TodoDocument, section_filter: Option<&str>) -> Result<(), TodoError> {
+    for section in &document.sections {
+        if let Some(filter) = section_filter
+            && section.title != filter
+        {
+            continue;
+        }
+
+        println!("{}", section.title);
+
+        for task in &section.tasks {
+            let marker = if task.completed { "x" } else { " " };
+            println!("  [{marker}] {}", task.text);
+        }
+
+        println!();
+    }
 
     Ok(())
 }

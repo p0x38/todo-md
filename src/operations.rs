@@ -12,11 +12,25 @@ pub fn add_task(
         .position(|section| section.title == section_title)
         .ok_or_else(|| TodoError::SectionNotFound(section_title.to_string()))?;
 
-    let insert_at = document.sections[section_index]
-        .tasks
-        .last()
-        .map(|task| task.line + 1)
-        .unwrap_or(document.sections[section_index].line + 2);
+    let section_start = document.sections[section_index].line;
+    let section_end = document
+        .sections
+        .get(section_index + 1)
+        .map(|section| section.line)
+        .unwrap_or(document.lines.len());
+
+    let insert_at = if let Some(task) = document.sections[section_index].tasks.last() {
+        task.line + 1
+    } else {
+        let content_end = document.lines[section_start + 1..section_end]
+            .iter()
+            .rposition(|line| !line.trim().is_empty());
+
+        match content_end {
+            Some(index) => section_start + index + 2,
+            None => section_start + 2,
+        }
+    };
 
     document.lines.insert(insert_at, format!("- [ ] {text}"));
 

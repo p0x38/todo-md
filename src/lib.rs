@@ -4,3 +4,4 @@ pub mod model;
 pub mod operations;
 pub mod parser;
 pub mod renderer;
+pub mod validator;

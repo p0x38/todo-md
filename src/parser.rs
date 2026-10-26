@@ -39,7 +39,7 @@ pub fn parse(input: &str) -> TodoDocument {
 
 fn parse_task(line: &str, line_number: usize) -> Option<Task> {
     let task = line.strip_prefix("- [")?;
-    let (status, text) = task.split_once("] ")?;
+    let (status, remainder) = task.split_once("] ")?;
 
     let completed = match status {
         " " => false,
@@ -47,9 +47,30 @@ fn parse_task(line: &str, line_number: usize) -> Option<Task> {
         _ => return None,
     };
 
+    let (id, text) = parse_id(remainder);
+
     Some(Task {
+        id,
         completed,
         text: text.to_string(),
         line: line_number,
     })
+}
+
+fn parse_id(text: &str) -> (Option<String>, &str) {
+    let Some(remainder) = text.strip_prefix("{id: ") else {
+        return (None, text);
+    };
+
+    let Some(end) = remainder.find("} ") else {
+        return (None, text);
+    };
+
+    let id = &remainder[..end];
+
+    if id.is_empty() {
+        return (None, text);
+    }
+
+    (Some(id.to_string()), &remainder[end + 2..])
 }

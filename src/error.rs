@@ -12,4 +12,7 @@ pub enum TodoError {
 
     #[error("I/O error: {0}")]
     Io(#[from] io::Error),
+
+    #[error("validation error on line {line}: {message}")]
+    Validation { line: usize, message: String },
 }

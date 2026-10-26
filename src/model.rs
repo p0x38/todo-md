@@ -15,6 +15,7 @@ pub struct Section {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Task {
+    pub id: Option<String>,
     pub completed: bool,
     pub text: String,
     pub line: usize,
